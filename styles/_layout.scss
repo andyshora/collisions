@@ -1,0 +1,283 @@
+/**
+ *
+ * Elevator Algorithms
+ * Layout
+ *
+ *
+ * @author Andy Shora
+ *
+**/
+
+$navWidth: 280px;
+$navTransitionDuration: .2s;
+
+$c1: rgb(231, 76, 60);
+$c2: rgb(192, 57, 43);
+$g1: #858585;
+$g2: #767676;
+
+* {
+  @include prefix(box-sizing, border-box);
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+html, body {
+  min-width: 320px;
+  background: black;
+  color: #3ED2F3;
+
+  &.nav--open {
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
+.wrap {
+  padding: 100px;
+}
+
+.content {
+  vertical-align: top;
+  overflow: auto;
+  padding: 40px 50px;
+  background: $g1;
+  min-height: 1000px;
+  position: relative;
+
+  > h1 {
+    position: relative;
+  }
+
+  .theme--visual & {
+    background: $c1;
+  }
+
+  &.nav--open {
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  @include from-width($breakpoint-large) {
+    margin-left: $navWidth;
+    padding: 60px 50px;
+  }
+
+  > * {
+    .app--loading & {
+      opacity: 0;
+    }
+  }
+}
+.instructions {
+  padding: 40px 0;
+}
+.instructions__parameters {
+  margin: 30px 0;
+  overflow-x: scroll;
+
+  thead {
+    background: rgba(255,255,255,.1);
+  }
+  tr {
+    &:nth-child(odd) {
+      background: rgba(255,255,255,.05);
+    }
+    &:nth-child(even) {
+      background: rgba(255,255,255,.1);
+    }
+  }
+
+  th, td {
+    padding: 4px 15px 4px 10px;
+    text-align: left;
+  }
+}
+.loading {
+  text-align: center;
+  padding: 50px;
+  display: none;
+  font-size: 20px;
+  position: absolute;
+  top: -50px;
+
+  @include from-width($breakpoint-large) {
+    margin-left: $navWidth;
+  }
+
+  .app--loading & {
+    display: block;
+  }
+}
+.header {
+  min-height: 50px;
+  background: $g2;
+
+  .theme--visual & {
+    background: $c2;
+  }
+
+  > h1 {
+    padding: 70px 60px;
+  }
+
+  @include from-width($breakpoint-large) {
+    margin-left: $navWidth;
+  }
+
+  .toggle {
+    width: 40px;
+    height: 40px;
+    top: 0;
+    overflow: hidden;
+    position: absolute;
+    @include prefix(transition, all $navTransitionDuration linear);
+    @include prefix(transform, translateX(0));
+
+    .nav--open & {
+      @include prefix(transform, translateX($navWidth));
+    }
+
+    @include from-width($breakpoint-large) {
+      display: none;
+    }
+  }
+}
+
+.context-switcher {
+  position: absolute;
+  top: 2px;
+  right: 8px;
+
+  > a {
+    cursor: pointer;
+    background: none;
+    padding-bottom: 4px !important;
+    text-decoration: none;
+
+    &:nth-child(1) {
+      .theme--ux & {
+        border-bottom: 1px solid white;
+      }
+    }
+    &:nth-child(2) {
+      .theme--visual & {
+        border-bottom: 1px solid white;
+      }
+    }
+
+
+  }
+}
+.sidebar {
+  width: $navWidth;
+  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  background: white;
+  color: white;
+  vertical-align: top;
+  z-index: 4;
+  color: black;
+
+  @include prefix(transition, all $navTransitionDuration linear);
+  @include prefix(transform, translateX(-$navWidth));
+
+  .nav--open & {
+    @include prefix(transform, translateX(0));
+  }
+
+  @include from-width($breakpoint-large) {
+    @include prefix(transform, translateX(0));
+    height: auto;
+  }
+}
+/* wrapper to hide scroll bar */
+.sidebar-wrap {
+  width: $navWidth + 30px;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+
+  @include from-width($breakpoint-large) {
+    overflow: auto;
+    height: auto;
+  }
+}
+.sidebar__bottom {
+  text-align: center;
+  height: 200px;
+}
+.app-download-link {
+  font-size: 10px;
+  padding: 20px;
+}
+#qrcode {
+  margin: 50px auto 20px;
+  text-align: center;
+  position: relative;
+  opacity: 1;
+  @include prefix(transition, all .2s linear);
+
+  .app--loading & {
+    opacity: 0;
+    @include prefix(transform, scale(.9));
+  }
+
+  > canvas, > img {
+    margin: 0 auto;
+  }
+
+  &:after {
+    content: 'preview this page';
+    position: absolute;
+    text-align: center;
+    width: 200px;
+    font-size: 10px;
+    color: black;
+    left: 50%;
+    top: 150px;
+    margin-left: -100px;
+  }
+}
+.overlay {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, .5);
+  display: none;
+  z-index: 3;
+
+  .nav--open & {
+    display: block;
+  }
+
+  @include from-width($breakpoint-large) {
+    display: none !important;
+  }
+}
+
+
+
+.relative {
+  position: relative;
+}
+
+.show-on-iphone {
+  display: none;
+
+  .iphone & {
+    display: inline-block;
+  }
+}
+.show-on-android {
+  display: none;
+
+  .android & {
+    display: inline-block;
+  }
+}
