@@ -12,6 +12,7 @@
 @import "_utils";
 @import "_layout";
 @import "_typography";
+@import "mixins/_flexbox";
 
 /* cheese color scheme, based off http://www.colorhexa.com/ffbd88 'Macaroni and Cheese'! */
 $red: rgb(255, 136, 143);
@@ -55,6 +56,34 @@ html, body {
     background: url(/images/noise-50.png) 0 0 repeat;
     pointer-events: none;
   }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  @include flexbox();
+  @include justify-content(center);
+  @include align-items(center);
+  pointer-events: none;
+  @include prefix(transition, opacity 2s);
+  opacity: 1;
+
+  .app--loaded & {
+    opacity: 0;
+  }
+}
+
+.title {
+  color: white;
+  font-size: 48px;
+  padding: 0;
+  margin: 0 auto;
+  text-align: center;
+  @include flexbox();
 }
 
 #canvas {

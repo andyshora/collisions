@@ -412,221 +412,7 @@ li {
   -webkit-tap-highlight-color: transparent; }
 
 html, body {
-  min-width: 320px;
-  background: black;
-  color: #3ED2F3; }
-  html.nav--open, body.nav--open {
-    height: 100%;
-    overflow: hidden; }
-
-.wrap {
-  padding: 100px; }
-
-.content {
-  vertical-align: top;
-  overflow: auto;
-  padding: 40px 50px;
-  background: #858585;
-  min-height: 1000px;
-  position: relative; }
-  .content > h1 {
-    position: relative; }
-  .theme--visual .content {
-    background: #e74c3c; }
-  .content.nav--open {
-    min-height: 0;
-    height: 100%;
-    overflow: hidden; }
-  @media (min-width: 1024px) {
-    .content {
-      margin-left: 280px;
-      padding: 60px 50px; } }
-  .app--loading .content > * {
-    opacity: 0; }
-
-.instructions {
-  padding: 40px 0; }
-
-.instructions__parameters {
-  margin: 30px 0;
-  overflow-x: scroll; }
-  .instructions__parameters thead {
-    background: rgba(255, 255, 255, 0.1); }
-  .instructions__parameters tr:nth-child(odd) {
-    background: rgba(255, 255, 255, 0.05); }
-  .instructions__parameters tr:nth-child(even) {
-    background: rgba(255, 255, 255, 0.1); }
-  .instructions__parameters th, .instructions__parameters td {
-    padding: 4px 15px 4px 10px;
-    text-align: left; }
-
-.loading {
-  text-align: center;
-  padding: 50px;
-  display: none;
-  font-size: 20px;
-  position: absolute;
-  top: -50px; }
-  @media (min-width: 1024px) {
-    .loading {
-      margin-left: 280px; } }
-  .app--loading .loading {
-    display: block; }
-
-.header {
-  min-height: 50px;
-  background: #767676; }
-  .theme--visual .header {
-    background: #c0392b; }
-  .header > h1 {
-    padding: 70px 60px; }
-  @media (min-width: 1024px) {
-    .header {
-      margin-left: 280px; } }
-  .header .toggle {
-    width: 40px;
-    height: 40px;
-    top: 0;
-    overflow: hidden;
-    position: absolute;
-    -webkit-transition: all 0.2s linear;
-    -moz-transition: all 0.2s linear;
-    -ms-transition: all 0.2s linear;
-    transition: all 0.2s linear;
-    -webkit-transform: translateX(0);
-    -moz-transform: translateX(0);
-    -ms-transform: translateX(0);
-    transform: translateX(0); }
-    .nav--open .header .toggle {
-      -webkit-transform: translateX(280px);
-      -moz-transform: translateX(280px);
-      -ms-transform: translateX(280px);
-      transform: translateX(280px); }
-    @media (min-width: 1024px) {
-      .header .toggle {
-        display: none; } }
-
-.context-switcher {
-  position: absolute;
-  top: 2px;
-  right: 8px; }
-  .context-switcher > a {
-    cursor: pointer;
-    background: none;
-    padding-bottom: 4px !important;
-    text-decoration: none; }
-    .theme--ux .context-switcher > a:nth-child(1) {
-      border-bottom: 1px solid white; }
-    .theme--visual .context-switcher > a:nth-child(2) {
-      border-bottom: 1px solid white; }
-
-.sidebar {
-  width: 280px;
-  height: 100%;
-  overflow: hidden;
-  position: absolute;
-  top: 0;
-  background: white;
-  color: white;
-  vertical-align: top;
-  z-index: 4;
-  color: black;
-  -webkit-transition: all 0.2s linear;
-  -moz-transition: all 0.2s linear;
-  -ms-transition: all 0.2s linear;
-  transition: all 0.2s linear;
-  -webkit-transform: translateX(-280px);
-  -moz-transform: translateX(-280px);
-  -ms-transform: translateX(-280px);
-  transform: translateX(-280px); }
-  .nav--open .sidebar {
-    -webkit-transform: translateX(0);
-    -moz-transform: translateX(0);
-    -ms-transform: translateX(0);
-    transform: translateX(0); }
-  @media (min-width: 1024px) {
-    .sidebar {
-      -webkit-transform: translateX(0);
-      -moz-transform: translateX(0);
-      -ms-transform: translateX(0);
-      transform: translateX(0);
-      height: auto; } }
-
-/* wrapper to hide scroll bar */
-.sidebar-wrap {
-  width: 310px;
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch; }
-  @media (min-width: 1024px) {
-    .sidebar-wrap {
-      overflow: auto;
-      height: auto; } }
-
-.sidebar__bottom {
-  text-align: center;
-  height: 200px; }
-
-.app-download-link {
-  font-size: 10px;
-  padding: 20px; }
-
-#qrcode {
-  margin: 50px auto 20px;
-  text-align: center;
-  position: relative;
-  opacity: 1;
-  -webkit-transition: all 0.2s linear;
-  -moz-transition: all 0.2s linear;
-  -ms-transition: all 0.2s linear;
-  transition: all 0.2s linear; }
-  .app--loading #qrcode {
-    opacity: 0;
-    -webkit-transform: scale(0.9);
-    -moz-transform: scale(0.9);
-    -ms-transform: scale(0.9);
-    transform: scale(0.9); }
-  #qrcode > canvas, #qrcode > img {
-    margin: 0 auto; }
-  #qrcode:after {
-    content: 'preview this page';
-    position: absolute;
-    text-align: center;
-    width: 200px;
-    font-size: 10px;
-    color: black;
-    left: 50%;
-    top: 150px;
-    margin-left: -100px; }
-
-.overlay {
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  left: 0;
-  top: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: none;
-  z-index: 3; }
-  .nav--open .overlay {
-    display: block; }
-  @media (min-width: 1024px) {
-    .overlay {
-      display: none !important; } }
-
-.relative {
-  position: relative; }
-
-.show-on-iphone {
-  display: none; }
-  .iphone .show-on-iphone {
-    display: inline-block; }
-
-.show-on-android {
-  display: none; }
-  .android .show-on-android {
-    display: inline-block; }
+  min-width: 320px; }
 
 /**
  *
@@ -637,8 +423,11 @@ html, body {
  * @author Andy Shora
  *
 **/
+@font-face {
+  font-family: 'DINWeb';
+  src: url("DINWeb.woff") format("woff"); }
 body {
-  font-family: 'Hack', Helvetica, sans-serif;
+  font-family: 'DINWeb', Helvetica, sans-serif;
   font-size: 15px;
   line-height: 1.4;
   -webkit-font-smoothing: antialiased; }
@@ -788,6 +577,49 @@ html, body {
     height: 100%;
     background: url(/images/noise-50.png) 0 0 repeat;
     pointer-events: none; }
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  -moz-justify-content: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  align-items: center;
+  pointer-events: none;
+  -webkit-transition: opacity 2s;
+  -moz-transition: opacity 2s;
+  -ms-transition: opacity 2s;
+  transition: opacity 2s;
+  opacity: 1; }
+  .app--loaded .overlay {
+    opacity: 0; }
+
+.title {
+  color: white;
+  font-size: 48px;
+  padding: 0;
+  margin: 0 auto;
+  text-align: center;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: flex; }
 
 #canvas {
   width: 100%;

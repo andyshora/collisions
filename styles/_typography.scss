@@ -8,8 +8,14 @@
  *
 **/
 
+@font-face {
+  font-family: 'DINWeb';
+  src: url('DINWeb.woff') format('woff');
+}
+
+
 body {
-  font-family: 'Hack', Helvetica, sans-serif;
+  font-family: 'DINWeb', Helvetica, sans-serif;
   font-size: 15px;
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
