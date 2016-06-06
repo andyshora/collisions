@@ -240,12 +240,18 @@ const d2r = deg => {
   return deg * Math.PI / 180;
 };
 
+const playSound = sound => {
+  // todo - find sounds and implement this
+};
+
 const onCollide = (bullet, target, angle) => {
   // console.log('onCollide', bullet);
   // shape has been collided with
   // create a few more shapes at its position
   // then remove it
   bullet.remove();
+
+  playSound('hit');
 
   for (let i = 0; i < traces.length; i++) {
     traces[i].remove();
@@ -305,6 +311,9 @@ const onCollide = (bullet, target, angle) => {
 };
 
 const fireNewShape = () => {
+
+  playSound('fire');
+
   currentBulletIndex = chance.integer({ min: 0, max: shapesArr.length - 1 });
 
   // ensure no newly created particles are the new target
