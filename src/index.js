@@ -5,34 +5,39 @@
 paper.install(window);
 
 const SHAPE_RADIUS = 4;
-let NUM_SHAPES = 360;
+let NUM_SHAPES = 120;
+let NUM_RINGS = 4;
+let RING_RADIUS = 0.1;
 
 let WIDTH;
 let HEIGHT;
 let shapesArr = [];
 let ineligibleShapes = [];
 let explodingShapes = [];
-let circle, square, hexagon, triangle, trace;
+let symbols = [];
+let trace;
 let move;
 let currentBulletIndex, currentTargetIndex;
 
 const COLORS = [
   'rgb(0, 157, 249)',
   'rgb(255, 0, 217)',
-  'rgb(0, 117, 185)',
+  'rgb(247, 255, 0)',
   'rgb(0, 196, 194)'
 ];
 
 const createTracePath = () => {
   let path = new Path.Circle(new Point(0, 0), 1);
   path.fillColor = 'rgb(255, 255, 255)';
+  path.opacity = 0.2;
   return path;
 };
 
 const createExplosionPath = radius => {
   let path = new Path.Circle(new Point(0, 0), radius);
-  path.fillColor = 'rgb(255, 255, 255)';
-  path.opacity = 0.05;
+  path.fillColor = COLORS[0];
+  // path.strokeColor = 'white';
+  path.opacity = 0;
 
   /*path.fillColor = {
     gradient: {
@@ -49,6 +54,12 @@ const createExplosionPath = radius => {
 const createCirclePath = () => {
   let path = new Path.Circle(new Point(0, 0), SHAPE_RADIUS);
   path.fillColor = COLORS[0];
+  return path;
+};
+
+const createCirclePath2 = () => {
+  let path = new Path.Circle(new Point(0, 0), SHAPE_RADIUS);
+  path.fillColor = COLORS[1];
   return path;
 };
 
@@ -135,30 +146,49 @@ window.onload = () => {
 
 };
 
-const setupShapes = () => {
+let ringGroup, innerRingGroup;
 
-  circle = new Symbol(createCirclePath());
-  trace = new Symbol(createTracePath());
+let ringGroups;
+
+const setupShapes = () => {
 
   const degreesPerSeg = 360 / NUM_SHAPES;
   const centerPos = paper.view.center;
-  console.log('centerPos', centerPos);
 
-  for (let i = 0; i < NUM_SHAPES; i++) {
+  trace = new Symbol(createTracePath());
+  ringGroups = [];
 
-    let theta = i * degreesPerSeg;
+  for (let i = 0; i < NUM_RINGS; i++) {
+    ringGroups.push(new Group());
 
-    let pos = {
-      x: centerPos.x + Math.cos(d2r(theta)) * HEIGHT * 0.3,
-      y: centerPos.y + Math.sin(d2r(theta)) * HEIGHT * 0.3
-    };
+    // create shape symbol
+    let symbolPath = new Path.Circle(new Point(0, 0), SHAPE_RADIUS);
+    symbolPath.fillColor = COLORS[i];
 
-    let placed = circle.place(new Point(pos.x, pos.y));
-    placed.scale(chance.floating({ min: 0.2, max: 0.6 }));
+    symbols.push(new Symbol(symbolPath));
 
-    placed.data.eligible = true;
 
-    shapesArr.push(placed);
+    for (let j = 0; j < NUM_SHAPES; j++) {
+
+      let theta = j * degreesPerSeg;
+
+      let pos = {
+        x: centerPos.x + Math.cos(d2r(theta)) * HEIGHT * 0.1 * (i + 1),
+        y: centerPos.y + Math.sin(d2r(theta)) * HEIGHT * 0.1 * (i + 1)
+      };
+
+      let placed = symbols[i].place(new Point(pos.x, pos.y));
+      let size = chance.floating({ min: 0.2, max: 0.2 * (i + 1) });
+      placed.scale(size);
+
+      placed.data.eligible = true;
+      placed.data.colorIndex = i;
+      placed.data.size = size;
+
+      shapesArr.push(placed);
+      ringGroups[i].addChild(placed);
+    }
+
   }
 
 
@@ -198,25 +228,29 @@ const onCollide = (bullet, target, angle) => {
     traces[i].remove();
   }
 
-  const explosionRadius = chance.integer({ min: 20, max: 60 });
-  const numParts = 5;
+  const explosionRadius = chance.integer({ min: 10, max: 30 });
+  const numParts = 12;
   let explosionShape = createExplosionPath(explosionRadius);
   explosionShape.position = target.position;
 
   for (let i = 0; i < numParts; i++) {
 
-    const theta = angle + (i * (180 / numParts)) - 90;
+    // const theta = angle + (i * (180 / numParts)) - 90;
+    const theta = angle + i * (360 / numParts);
 
     let pos = {
       x: target.position.x + (explosionRadius * Math.cos(d2r(theta))),
       y: target.position.y + (explosionRadius * Math.sin(d2r(theta)))
     };
 
-    let placed = circle.place(new Point(pos.x, pos.y));
+    let placed = symbols[target.data.colorIndex].place(new Point(pos.x, pos.y));
     // placed.rotate(chance.integer({ min: 0, max: 180 }));
-    placed.scale(chance.floating({ min: 0.2, max: 0.4 }));
+    let size = chance.floating({ min: 0.2, max: 0.2 * (i + 1) });
+    placed.scale(size);
 
     placed.data.eligible = false;
+    placed.data.size = size;
+    placed.data.colorIndex = target.data.colorIndex;
     placed.data.origin = target.position;
     placed.data.theta = theta;
     placed.data.parentPosition = target.position;
@@ -224,7 +258,7 @@ const onCollide = (bullet, target, angle) => {
     explodingShapes.push(placed);
     ineligibleShapes.push(placed);
 
-    shapesArr.push(placed);
+    shapesArr.push(placed); // ringGroup.addChild
   }
 
   NUM_SHAPES += numParts - 1;
@@ -252,18 +286,21 @@ const fireNewShape = () => {
 };
 
 let lastShiftedAt = 0;
-let shiftEvery = 60;
+let shiftEvery = 200;
 let explosionInProgress = false;
 let traces = [];
 
 const onMouseDown = event => {
 
   let pos = event.point;
-  let placed = circle.place(new Point(pos.x, pos.y))
+  let placed = circle.place(new Point(pos.x, pos.y));
+  placed.data.colorIndex = 0;
   placed.rotate(chance.integer({ min: 0, max: 180 }));
-  placed.scale(chance.floating({ min: 0.5, max: 1 }));
+  let size = chance.floating({ min: 0.2, max: 0.2 * (i + 1) });
+  placed.scale(size);
 
   placed.data.eligible = true;
+  placed.data.size = size;
   shapesArr.push(placed);
   NUM_SHAPES++;
 };
@@ -282,6 +319,15 @@ const onMouseDrag = event => {
 
 const onFrame = event => {
   // console.log(event);
+
+  // ringGroup.rotate(.1);
+  // innerRingGroup.rotate(-0.1);
+  for (let i = NUM_RINGS - 1; i >= 0; i--) {
+    let speed = 0.05 * i;
+    ringGroups[i].rotate(speed);
+  }
+
+  // moving bullet
   if (move) {
     let vector = shapesArr[currentTargetIndex].position.subtract(shapesArr[currentBulletIndex].position);
     const originalLength = vector.length;
@@ -292,7 +338,7 @@ const onFrame = event => {
     // }
 
     vector.length = WIDTH / 2;
-    shapesArr[currentBulletIndex].position = shapesArr[currentBulletIndex].position.add(vector.divide(120));
+    shapesArr[currentBulletIndex].position = shapesArr[currentBulletIndex].position.add(vector.divide(240));
     shapesArr[currentBulletIndex].rotate(1);
 
     if (originalLength < 5) {
@@ -306,18 +352,18 @@ const onFrame = event => {
     // move parts out from their origin
     for (let i = 0; i < explodingShapes.length; i++) {
       let vector = explodingShapes[i].data.parentPosition.subtract(explodingShapes[i].position);
-      if (vector.length > 100) {
+      if (vector.length > 50) {
         explodingShapes = [];
       } else {
         explodingShapes[i].position = explodingShapes[i].position.subtract(vector.divide(300));
-        explodingShapes[i].rotate(10);
+        // explodingShapes[i].rotate(10);
       }
     }
   }
 
   // enable new shapes as bullets and targets
   if ((event.count - lastShiftedAt > shiftEvery) && ineligibleShapes.length) {
-    shiftEvery = ineligibleShapes.length > 50 ? 1 : 60;
+    shiftEvery = ineligibleShapes.length > 200 ? 1 : 200;
     ineligibleShapes[0].data.eligible = true;
     ineligibleShapes.shift();
     lastShiftedAt = event.count;
