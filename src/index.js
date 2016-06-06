@@ -17,7 +17,7 @@ let explodingShapes = [];
 let symbols = [];
 let trace;
 let move;
-let currentBulletIndex, currentTargetIndex;
+let currentBulletIndex, currentTargetIndex, bulletSpeed, orbitSpeed;
 
 const COLORS = [
   'rgb(0, 157, 249)',
@@ -97,6 +97,14 @@ const createHexagonPath = () => {
   return hexagon;
 };
 
+const changeBulletSpeed = speed => {
+  bulletSpeed = speed;
+};
+
+const changeOrbitSpeed = speed => {
+  orbitSpeed = speed;
+};
+
 const createRandomShape = pos => {
   const shapeIndex = chance.integer({ min: 0, max: 3 });
   let path;
@@ -125,6 +133,9 @@ window.onload = () => {
   let canvas = document.getElementById('canvas');
   tool = new Tool();
 
+  bulletSpeed = 3;
+  orbitSpeed = 2;
+
   WIDTH = window.innerWidth;
   HEIGHT = window.innerHeight;
 
@@ -139,6 +150,14 @@ window.onload = () => {
 
   setupShapes();
   fireNewShape();
+
+  document.getElementById('bulletSpeed').addEventListener('change', e => {
+    changeBulletSpeed(e.target.valueAsNumber);
+  });
+
+  document.getElementById('orbitSpeed').addEventListener('change', e => {
+    changeOrbitSpeed(e.target.valueAsNumber);
+  });
 
   setTimeout(() => {
     document.body.className += 'app--loaded';
@@ -245,7 +264,7 @@ const onCollide = (bullet, target, angle) => {
 
     let placed = symbols[target.data.colorIndex].place(new Point(pos.x, pos.y));
     // placed.rotate(chance.integer({ min: 0, max: 180 }));
-    let size = chance.floating({ min: 0.2, max: 0.2 * (i + 1) });
+    let size = chance.floating({ min: 0.2, max: 0.2 * (target.data.colorIndex + 1) });
     placed.scale(size);
 
     placed.data.eligible = false;
@@ -292,11 +311,13 @@ let traces = [];
 
 const onMouseDown = event => {
 
+  let indx = chance.integer({ min: 0, max: symbols.length - 1 });
+
   let pos = event.point;
-  let placed = circle.place(new Point(pos.x, pos.y));
-  placed.data.colorIndex = 0;
-  placed.rotate(chance.integer({ min: 0, max: 180 }));
-  let size = chance.floating({ min: 0.2, max: 0.2 * (i + 1) });
+  let placed = symbols[indx].place(new Point(pos.x, pos.y));
+  placed.data.colorIndex = indx;
+  // placed.rotate(chance.integer({ min: 0, max: 180 }));
+  let size = chance.floating({ min: 0.2, max: 0.2 * (indx + 1) });
   placed.scale(size);
 
   placed.data.eligible = true;
@@ -309,7 +330,7 @@ let numDragEvents = 0;
 
 const onMouseDrag = event => {
 
-  if (numDragEvents % 4 === 0) {
+  if (numDragEvents % 2 === 0) {
     onMouseDown(event);
 
   }
@@ -323,7 +344,7 @@ const onFrame = event => {
   // ringGroup.rotate(.1);
   // innerRingGroup.rotate(-0.1);
   for (let i = NUM_RINGS - 1; i >= 0; i--) {
-    let speed = 0.05 * i;
+    let speed = 0.01 * i * orbitSpeed;
     ringGroups[i].rotate(speed);
   }
 
@@ -338,7 +359,7 @@ const onFrame = event => {
     // }
 
     vector.length = WIDTH / 2;
-    shapesArr[currentBulletIndex].position = shapesArr[currentBulletIndex].position.add(vector.divide(240));
+    shapesArr[currentBulletIndex].position = shapesArr[currentBulletIndex].position.add(vector.divide(360 / bulletSpeed));
     shapesArr[currentBulletIndex].rotate(1);
 
     if (originalLength < 5) {

@@ -91,3 +91,18 @@ html, body {
   height: 100%;
 }
 
+#bulletSpeed {
+  position: absolute;
+  z-index: 10;
+  bottom: 10px;
+  left: 10px;
+  width: 100px;
+}
+
+#orbitSpeed {
+  position: absolute;
+  z-index: 10;
+  bottom: 30px;
+  left: 10px;
+  width: 100px;
+}
