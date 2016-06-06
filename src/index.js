@@ -5,7 +5,7 @@
 paper.install(window);
 
 const SHAPE_RADIUS = 4;
-let NUM_SHAPES = 50;
+let NUM_SHAPES = 360;
 
 let WIDTH;
 let HEIGHT;
@@ -136,28 +136,25 @@ window.onload = () => {
 };
 
 const setupShapes = () => {
-  let circlePath = createCirclePath();
-  let squarePath = createSquarePath();
-  let trianglePath = createTrianglePath();
-  let hexagonPath = createHexagonPath();
-  let tracePath = createTracePath();
 
-  circle = new Symbol(circlePath);
-  square = new Symbol(squarePath);
-  hexagon = new Symbol(hexagonPath);
-  triangle = new Symbol(trianglePath);
-  trace = new Symbol(tracePath);
+  circle = new Symbol(createCirclePath());
+  trace = new Symbol(createTracePath());
+
+  const degreesPerSeg = 360 / NUM_SHAPES;
+  const centerPos = paper.view.center;
+  console.log('centerPos', centerPos);
 
   for (let i = 0; i < NUM_SHAPES; i++) {
 
+    let theta = i * degreesPerSeg;
+
     let pos = {
-      x: chance.integer({ min: 0, max: WIDTH }),
-      y: chance.integer({ min: 0, max: HEIGHT })
+      x: centerPos.x + Math.cos(d2r(theta)) * HEIGHT * 0.3,
+      y: centerPos.y + Math.sin(d2r(theta)) * HEIGHT * 0.3
     };
 
-    let placed = createRandomShape(pos);
-    placed.rotate(chance.integer({ min: 0, max: 180 }));
-    placed.scale(chance.floating({ min: 0.5, max: 1 }));
+    let placed = circle.place(new Point(pos.x, pos.y));
+    placed.scale(chance.floating({ min: 0.2, max: 0.6 }));
 
     placed.data.eligible = true;
 
@@ -183,7 +180,7 @@ const onResize = view => {
   WIDTH = view.size.width;
   HEIGHT = view.size.height;
 
-  repositionShapes();
+  // repositionShapes();
 };
 
 const d2r = deg => {
@@ -215,9 +212,9 @@ const onCollide = (bullet, target, angle) => {
       y: target.position.y + (explosionRadius * Math.sin(d2r(theta)))
     };
 
-    let placed = createRandomShape(pos);
-    placed.rotate(chance.integer({ min: 0, max: 180 }));
-    placed.scale(chance.floating({ min: 0.5, max: 1 }));
+    let placed = circle.place(new Point(pos.x, pos.y));
+    // placed.rotate(chance.integer({ min: 0, max: 180 }));
+    placed.scale(chance.floating({ min: 0.2, max: 0.4 }));
 
     placed.data.eligible = false;
     placed.data.origin = target.position;
@@ -260,9 +257,9 @@ let explosionInProgress = false;
 let traces = [];
 
 const onMouseDown = event => {
-  console.log(event.point);
 
-  let placed = createRandomShape(event.point);
+  let pos = event.point;
+  let placed = circle.place(new Point(pos.x, pos.y))
   placed.rotate(chance.integer({ min: 0, max: 180 }));
   placed.scale(chance.floating({ min: 0.5, max: 1 }));
 
@@ -289,10 +286,10 @@ const onFrame = event => {
     let vector = shapesArr[currentTargetIndex].position.subtract(shapesArr[currentBulletIndex].position);
     const originalLength = vector.length;
 
-    if (event.count % 2 === 0) {
+    // if (event.count % 2 === 0) {
       traces.push(trace.place(new Point(shapesArr[currentBulletIndex].position)));
 
-    }
+    // }
 
     vector.length = WIDTH / 2;
     shapesArr[currentBulletIndex].position = shapesArr[currentBulletIndex].position.add(vector.divide(120));
