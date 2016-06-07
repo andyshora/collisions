@@ -218,14 +218,29 @@ const setupShapes = () => {
 };
 
 const repositionShapes = () => {
-  for (let i = 0; i < shapesArr.length; i++) {
 
-    let pos = {
-      x: chance.integer({ min: 0, max: WIDTH }),
-      y: chance.integer({ min: 0, max: HEIGHT })
-    };
+  const degreesPerSeg = 360 / NUM_SHAPES;
+  const centerPos = paper.view.center;
 
-    shapesArr[i].position = pos;
+  for (let i = 0; i < NUM_RINGS; i++) {
+
+    for (let j = 0; j < NUM_SHAPES; j++) {
+
+      let theta = j * degreesPerSeg;
+
+      let pos = {
+        x: centerPos.x + Math.cos(d2r(theta)) * HEIGHT * RING_RADIUS * (i + 2),
+        y: centerPos.y + Math.sin(d2r(theta)) * HEIGHT * RING_RADIUS * (i + 2)
+      };
+
+      const indx = (i * NUM_SHAPES) + j;
+
+      if (indx < shapesArr.length) {
+        shapesArr[indx].position = pos;
+
+      }
+    }
+
   }
 };
 
@@ -233,7 +248,7 @@ const onResize = view => {
   WIDTH = view.size.width;
   HEIGHT = view.size.height;
 
-  // repositionShapes();
+  repositionShapes();
 };
 
 const d2r = deg => {

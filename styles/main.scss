@@ -12,6 +12,7 @@
 @import "_utils";
 @import "_layout";
 @import "_typography";
+@import "_inputs";
 @import "mixins/_flexbox";
 
 /* cheese color scheme, based off http://www.colorhexa.com/ffbd88 'Macaroni and Cheese'! */
@@ -71,6 +72,7 @@ html, body {
   pointer-events: none;
   @include prefix(transition, opacity 2s);
   opacity: 1;
+  z-index: 3;
 
   .app--loaded & {
     opacity: 0;
@@ -93,7 +95,7 @@ html, body {
 
 #bulletSpeed {
   position: absolute;
-  z-index: 10;
+  z-index: 2;
   bottom: 10px;
   left: 10px;
   width: 100px;
@@ -101,7 +103,7 @@ html, body {
 
 #orbitSpeed {
   position: absolute;
-  z-index: 10;
+  z-index: 2;
   bottom: 30px;
   left: 10px;
   width: 100px;
